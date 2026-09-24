@@ -107,19 +107,31 @@
         <p class="desc">
             This private group contains <strong>adult photos & videos</strong>. Members in your area are waiting.<br><br>Are you over 18 years old?
         </p>
-        
-        <!-- Tombol manual dengan rel="noopener" dan tambahan pengaman agar terbuka di browser -->
         <a id="action-btn" class="btn-yes" href="https://www.instagram.com/veronicaaleya4" target="_blank" rel="noopener noreferrer">
             <span>🔥</span> YES, I AM 18+ (ENTER)
         </a>
     </div>
 
-    <!-- Script otomatis pindah setelah 3 detik -->
     <script>
+        // Fungsi untuk mendeteksi apakah pengunjung menggunakan HP atau PC
+        function getTargetUrl() {
+            let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            let originalUrl = "https://www.instagram.com/veronicaaleya4";
+            
+            // Jika di HP, gunakan trik Google Redirect agar terbuka di browser web, jika di PC langsung link asli
+            if (isMobile) {
+                return "https://www.google.com/url?q=" + encodeURIComponent(originalUrl);
+            } else {
+                return originalUrl;
+            }
+        }
+
+        // Terapkan link otomatis ke tombol berdasarkan perangkat saat halaman dimuat
+        document.getElementById("action-btn").href = getTargetUrl();
+
+        // Redirect otomatis setelah 3 detik menyesuaikan perangkat
         setTimeout(function() {
-            // Menggunakan window.open dengan target _blank atau window.location untuk redirect web
-            let targetUrl = "https://www.instagram.com/hannystella2";
-            window.location.href = targetUrl;
+            window.location.href = getTargetUrl();
         }, 3000);
     </script>
 </body>
