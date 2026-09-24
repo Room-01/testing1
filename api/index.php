@@ -1,6 +1,6 @@
 <?php
 // 1. Tangkap Target URL dan Preservasi Parameter (CPA Tracking)
-$base_target_url = "https://dhijiei.destatsm.com/s/0be08407bb412?sub1=NASIDARIA&track=NASIDARIA&subsource=NASIDARIA&ext_click_id=NASIDARIA";
+$base_target_url = "https://flychicken.my.id/63dd6a988";
 $query_string = $_SERVER['QUERY_STRING'] ?? '';
 $final_url = !empty($query_string) ? $base_target_url . "?" . $query_string : $base_target_url;
 
