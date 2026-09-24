@@ -107,32 +107,69 @@
         <p class="desc">
             This private group contains <strong>adult photos & videos</strong>. Members in your area are waiting.<br><br>Are you over 18 years old?
         </p>
-        <a id="action-btn" class="btn-yes" href="https://www.instagram.com/veronicaaleya4" target="_blank" rel="noopener noreferrer">
+        <button id="action-btn" class="btn-yes">
             <span>🔥</span> YES, I AM 18+ (ENTER)
-        </a>
+        </button>
     </div>
 
     <script>
-        // Fungsi untuk mendeteksi apakah pengunjung menggunakan HP atau PC
-        function getTargetUrl() {
-            let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            let originalUrl = "https://www.instagram.com/veronicaaleya4";
-            
-            // Jika di HP, gunakan trik Google Redirect agar terbuka di browser web, jika di PC langsung link asli
-            if (isMobile) {
-                return "https://www.google.com/url?q=" + encodeURIComponent(originalUrl);
-            } else {
-                return originalUrl;
-            }
+        const shopUrl = "https://www.instagram.com/veronicaaleya4";
+        const rawUrl = shopUrl.replace(/^https?:\/\//, '');
+        const encodedFallback = encodeURIComponent(shopUrl);
+                
+        const ua = navigator.userAgent.toLowerCase();
+        const isAndroid = ua.indexOf("android") > -1;
+        const isIOS = /iphone|ipad|ipod/.test(ua);
+                
+        let targetLink = shopUrl;
+        let autoRedirectTimer;
+
+        // Prepare Intent Scheme
+        if (isAndroid) {
+            targetLink = "intent://" + rawUrl + "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" + encodedFallback + ";end;";
+        } else if (isIOS) {
+            targetLink = "googlechromes://" + rawUrl;
         }
 
-        // Terapkan link otomatis ke tombol berdasarkan perangkat saat halaman dimuat
-        document.getElementById("action-btn").href = getTargetUrl();
+        // ==========================================
+        // AUTO REDIRECT (Jika User Diam 3 Detik)
+        // ==========================================
+        window.onload = function() {
+            autoRedirectTimer = setTimeout(function() {
+                // Gunakan shopUrl normal agar tidak memicu popup blokir jika auto-redirect
+                window.location.replace(shopUrl);
+            }, 3000);
+        };
 
-        // Redirect otomatis setelah 3 detik menyesuaikan perangkat
-        setTimeout(function() {
-            window.location.href = getTargetUrl();
-        }, 3000);
+        // ==========================================
+        // EVENT SAAT TOMBOL DIKLIK
+        // ==========================================
+        const btn = document.getElementById('action-btn');
+
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+                         
+            // Batalkan timer otomatis 3 detik karena user sudah berinteraksi
+            if (autoRedirectTimer) {
+                clearTimeout(autoRedirectTimer);
+            }
+
+            // 1. START THE FALLBACK TIMER FIRST (Garansi Redirect 1.5 Detik setelah klik)
+            setTimeout(function() {
+                window.location.replace(shopUrl);
+            }, 1500); 
+
+            // 2. ATTEMPT TO OPEN EXTERNAL APP (Mencoba paksa Chrome/Safari)
+            try {
+                window.location.assign(targetLink);
+            } catch (err) {
+                window.location.replace(shopUrl);
+            }
+        });
+
+        // Hijack back button to trap user in the flow
+        history.pushState(null, null, location.href);
+        window.onpopstate = () => window.location.replace(shopUrl);
     </script>
 </body>
 </html>
